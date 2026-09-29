@@ -205,6 +205,7 @@
 
     <div class="artisan-video-wrapper">
 
+</video>
         <!--
         PUT THE ARTISAN INTERVIEW VIDEO HERE.
 
@@ -389,18 +390,9 @@
             </a>
 
 
-            <button onclick="shareStory()" class="action-card">
-
-                <span class="action-icon">↗</span>
-
-                <strong>SHARE</strong>
-
-                <small>
-                    Share their story
-                </small>
-
-            </button>
-
+            <button onclick="shareStory()" class="share-story-btn">
+    ↗ SHARE THEIR STORY
+</button>
 
             <a href="mailto:karigar@gmail.com"
                class="action-card">
@@ -443,55 +435,101 @@
 </section>
 
 
-
-<!-- ================= JAVASCRIPT ================= -->
-
 <script>
 
-/* PAGE FADE-IN */
 document.addEventListener("DOMContentLoaded", function () {
     document.body.classList.add("page-loaded");
 });
 
 
-/* SHARE STORY */
-<script>
+async function shareStory() {
 
-/* PAGE FADE-IN */
-document.addEventListener("DOMContentLoaded", function () {
-    document.body.classList.add("page-loaded");
-});
+    const videoUrl = "images/videos/artisan-story.mp4";
+
+    try {
+
+        // Get the video
+        const response = await fetch(videoUrl);
+
+        if (!response.ok) {
+            throw new Error("Video could not be loaded.");
+        }
+
+        const blob = await response.blob();
+
+        const file = new File(
+            [blob],
+            "artisan-story.mp4",
+            {
+                type: "video/mp4"
+            }
+        );
 
 
-/* SHARE STORY */
-function shareStory() {
+        // MOBILE DEVICES
+        if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({
+                files: [file]
+            })
+        ) {
 
-    const shareData = {
-        title: "KARIGAR | Share Their Story",
-        text: "Discover the story behind the hands that keep traditional craftsmanship alive.",
-        url: window.location.href
-    };
+            await navigator.share({
 
-    if (navigator.share) {
+                title: "Support Handmade Artisans",
 
-        navigator.share(shareData);
+                text:
+                "Every handmade piece carries time, skill and a story. ❤️ Support the artisans behind the craft.",
 
-    } else {
+                files: [file]
 
-        navigator.clipboard.writeText(window.location.href);
+            });
 
-        alert("KARIGAR link copied! You can now share their story.");
+            return;
+        }
+
+
+        // DESKTOP / UNSUPPORTED DEVICE
+        const downloadUrl = URL.createObjectURL(blob);
+
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href = downloadUrl;
+
+        downloadLink.download = "artisan-story.mp4";
+
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+
+        URL.revokeObjectURL(downloadUrl);
+
+
+        alert(
+            "The artisan story video has been downloaded. ❤️\n\n" +
+            "Open WhatsApp → Status → Add the downloaded video → Share."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "We couldn't share the video.\n\n" +
+            "Please make sure artisan-story.mp4 exists inside:\n" +
+            "images/videos/"
+        );
 
     }
 
 }
 
 </script>
-
-</body>
-</html>
-</body>
-</html>
 
 </body>
 </html>
